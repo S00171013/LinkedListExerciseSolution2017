@@ -88,6 +88,8 @@ namespace LinkedListMenu
                     current = current.Next;
                     current.Value.InFocus = true;
                 }
+
+                // add rap around
             }
             if (InputEngine.IsKeyPressed(Keys.Up))
             {
@@ -98,6 +100,9 @@ namespace LinkedListMenu
                     current.Value.InFocus = true;
                 }
             }
+            // add rap around
+
+            // add a check to check and see if one of the menu Items is selected.
 
             // TODO: Add your update logic here
 

@@ -12,14 +12,14 @@ namespace LinkedListMenu
         public string text;
         public Texture2D tx;
         public bool InFocus;
-
+        // Add a selected state
         public MenuItem(string txt, Texture2D texture)
         {
             text = txt;
             tx = texture;
         }
 
-
+        // Add an Update to change the seleted state on Pressing the Enter Key
         public void draw(Rectangle bound, SpriteBatch sp, SpriteFont sf)
         {
             Color color = Color.White;
