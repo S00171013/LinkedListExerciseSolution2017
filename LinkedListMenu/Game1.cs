@@ -2,8 +2,11 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using System.Linq;
+using System;
+using InputEngineNS;
 
-namespace MonoScoreBoard
+namespace LinkedListMenu
 {
     /// <summary>
     /// This is the main type for your game.
@@ -13,8 +16,13 @@ namespace MonoScoreBoard
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         SpriteFont font;
-        public static LinkedList<Score> ScoreBoard = new LinkedList<Score>();
 
+        Rectangle widest;
+        LinkedList<MenuItem> MenuList
+            = new LinkedList<MenuItem>();
+
+        LinkedListNode<MenuItem> current;
+        
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -30,7 +38,7 @@ namespace MonoScoreBoard
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-
+            new InputEngine(this);
             base.Initialize();
         }
 
@@ -42,10 +50,15 @@ namespace MonoScoreBoard
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            OrderedInsert(ScoreBoard, new Score { PlayerName = "PP", score = 10 });
-            OrderedInsert(ScoreBoard, new Score { PlayerName = "BB", score = 30 });
-            OrderedInsert(ScoreBoard, new Score { PlayerName = "AA", score = 20 });
             font = Content.Load<SpriteFont>("font");
+            Texture2D tx = Content.Load<Texture2D>("Background");
+            MenuList.AddLast(new MenuItem("Menu Item    1", tx));
+            MenuList.AddLast(new MenuItem("Menu Item  2", tx));
+            MenuList.AddLast(new MenuItem("Menu Item  3", tx));
+            MenuList.AddLast(new MenuItem("Menu Item   4", tx));
+            current = MenuList.First;
+            current.Value.InFocus = true;
+            
             // TODO: use this.Content to load your game content here
         }
 
@@ -67,7 +80,25 @@ namespace MonoScoreBoard
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            
+            if (InputEngine.IsKeyPressed(Keys.Down))
+            {
+                if (current.Next != null)
+                {
+                    current.Value.InFocus = false;
+                    current = current.Next;
+                    current.Value.InFocus = true;
+                }
+            }
+            if (InputEngine.IsKeyPressed(Keys.Up))
+            {
+                if (current.Previous != null)
+                {
+                    current.Value.InFocus = false;
+                    current = current.Previous;
+                    current.Value.InFocus = true;
+                }
+            }
+
             // TODO: Add your update logic here
 
             base.Update(gameTime);
@@ -81,47 +112,42 @@ namespace MonoScoreBoard
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            string longest = getLongestMenuOptionText();
+            Vector2 size = font.MeasureString(longest);
+            widest = new Rectangle(new Point(0, 0), size.ToPoint());
+
+            Vector2 ScorePos = GraphicsDevice.Viewport.Bounds.Center.ToVector2();
+            Vector2 scoreSize = font.MeasureString(getLongestMenuOptionText());
+            // Calculate the position of the Scoreboard allowing for the size and number of scores to be displayed
+            ScorePos -= new Vector2(widest.Width / 2, scoreSize.Y * getMenuOptionsText().Count());
+            widest.Offset(ScorePos.X, ScorePos.Y);
+
             spriteBatch.Begin();
-            showScoreBoard();
+            foreach (var MenuItem in MenuList)
+            {
+                MenuItem.draw(widest, spriteBatch, font);
+                widest.Offset(0, widest.Height + 10);
+            }
             spriteBatch.End();
+            // TODO: Add your drawing code here
+
             base.Draw(gameTime);
         }
 
-        public void showScoreBoard()
+        public string getLongestMenuOptionText()
         {
-            // Get the first Score node
-            LinkedListNode<Score> first = ScoreBoard.First;
-            // Measure 
-            Vector2 scoreSize = font.MeasureString(first.Value.ToString());
-            // Get the center of the viewport
-            Vector2 ScorePos = GraphicsDevice.Viewport.Bounds.Center.ToVector2();
-            // Calculate the position of the Scoreboard allowing for the size and number of scores to be displayed
-            ScorePos -= new Vector2(scoreSize.X / 2, scoreSize.Y * ScoreBoard.Count);
-            foreach (var item in ScoreBoard)
-            {
-                string scoreText = item.PlayerName + " " + item.score.ToString();
-                spriteBatch.DrawString(font, scoreText, ScorePos, Color.White);
-                ScorePos += new Vector2(0, font.MeasureString(scoreText).Y + 10);
-            }
+            return (from s in MenuList
+                               orderby s.text.Length descending
+                               select s.text).First();
 
         }
 
-        public void OrderedInsert(LinkedList<Score> list, Score newScore)
+        public List<string> getMenuOptionsText()
         {
-            LinkedListNode<Score> node = list.First;
-            while (node != null && node.Value.score <= newScore.score)
-            {
-                node = node.Next;
-            }
-            if (node == null && list.First == null)
-                list.AddFirst(newScore);
-            else if (node == null)
-            {
-                list.AddAfter(list.Last, newScore);
-            }
-            else list.AddBefore(node, newScore);
+            return (from s in MenuList
+                    select s.text).ToList();
 
         }
+
     }
 }
