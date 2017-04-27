@@ -58,7 +58,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Game1.cs" />
+    <Compile Include="GamesUtilities.cs" />
     <Compile Include="InputManager.cs" />
+    <Compile Include="Menu.cs" />
     <Compile Include="MenuItem.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

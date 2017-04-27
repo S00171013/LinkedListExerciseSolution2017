@@ -17,12 +17,13 @@ namespace LinkedListMenu
         SpriteBatch spriteBatch;
         SpriteFont font;
 
-        Rectangle widest;
+        //Rectangle widest;
         LinkedList<MenuItem> MenuList
             = new LinkedList<MenuItem>();
+        private Menu menu;
 
-        LinkedListNode<MenuItem> current;
-        
+        //LinkedListNode<MenuItem> current;
+        //string SelectedText = string.Empty;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -39,6 +40,8 @@ namespace LinkedListMenu
         {
             // TODO: Add your initialization logic here
             new InputEngine(this);
+            GamesUtilities.s_graphics_device_ref = GraphicsDevice;
+
             base.Initialize();
         }
 
@@ -56,9 +59,12 @@ namespace LinkedListMenu
             MenuList.AddLast(new MenuItem("Menu Item  2", tx));
             MenuList.AddLast(new MenuItem("Menu Item  3", tx));
             MenuList.AddLast(new MenuItem("Menu Item   4", tx));
-            current = MenuList.First;
-            current.Value.InFocus = true;
-            
+
+            menu = new Menu(MenuList);
+
+            //current = MenuList.First;
+            //current.Value.InFocus = true;
+
             // TODO: use this.Content to load your game content here
         }
 
@@ -80,32 +86,7 @@ namespace LinkedListMenu
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-            if (InputEngine.IsKeyPressed(Keys.Down))
-            {
-                if (current.Next != null)
-                {
-                    current.Value.InFocus = false;
-                    current = current.Next;
-                    current.Value.InFocus = true;
-                }
-
-                // add rap around
-            }
-            if (InputEngine.IsKeyPressed(Keys.Up))
-            {
-                if (current.Previous != null)
-                {
-                    current.Value.InFocus = false;
-                    current = current.Previous;
-                    current.Value.InFocus = true;
-                }
-            }
-            // add rap around
-
-            // add a check to check and see if one of the menu Items is selected.
-
-            // TODO: Add your update logic here
-
+            menu.Update();
             base.Update(gameTime);
         }
 
@@ -116,43 +97,12 @@ namespace LinkedListMenu
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            string longest = getLongestMenuOptionText();
-            Vector2 size = font.MeasureString(longest);
-            widest = new Rectangle(new Point(0, 0), size.ToPoint());
-
-            Vector2 ScorePos = GraphicsDevice.Viewport.Bounds.Center.ToVector2();
-            Vector2 scoreSize = font.MeasureString(getLongestMenuOptionText());
-            // Calculate the position of the Scoreboard allowing for the size and number of scores to be displayed
-            ScorePos -= new Vector2(widest.Width / 2, scoreSize.Y * getMenuOptionsText().Count());
-            widest.Offset(ScorePos.X, ScorePos.Y);
-
             spriteBatch.Begin();
-            foreach (var MenuItem in MenuList)
-            {
-                MenuItem.draw(widest, spriteBatch, font);
-                widest.Offset(0, widest.Height + 10);
-            }
+            menu.Draw(spriteBatch, font);
             spriteBatch.End();
-            // TODO: Add your drawing code here
-
             base.Draw(gameTime);
         }
 
-        public string getLongestMenuOptionText()
-        {
-            return (from s in MenuList
-                               orderby s.text.Length descending
-                               select s.text).First();
-
-        }
-
-        public List<string> getMenuOptionsText()
-        {
-            return (from s in MenuList
-                    select s.text).ToList();
-
-        }
 
     }
 }

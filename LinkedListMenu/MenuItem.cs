@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using InputEngineNS;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace LinkedListMenu
         public string text;
         public Texture2D tx;
         public bool InFocus;
+        public bool Selected;
         // Add a selected state
         public MenuItem(string txt, Texture2D texture)
         {
@@ -20,6 +22,7 @@ namespace LinkedListMenu
         }
 
         // Add an Update to change the seleted state on Pressing the Enter Key
+        
         public void draw(Rectangle bound, SpriteBatch sp, SpriteFont sf)
         {
             Color color = Color.White;
