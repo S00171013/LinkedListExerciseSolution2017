@@ -21,7 +21,7 @@ namespace LinkedListMenu
             tx = texture;
         }
 
-        // Add an Update to change the seleted state on Pressing the Enter Key
+        // Add an Update to change the selected state on Pressing the Enter Key
         
         public void draw(Rectangle bound, SpriteBatch sp, SpriteFont sf)
         {
@@ -31,9 +31,16 @@ namespace LinkedListMenu
                 color = new Color(color,128);
             }
             sp.Draw(tx, bound, color);
-            sp.DrawString(sf, text, new Vector2(bound.X,bound.Y), Color.White);
 
-            
+            // Original line.
+            //sp.DrawString(sf, text, new Vector2(bound.X, bound.Y), Color.White);
+
+            Vector2 size = sf.MeasureString(text);
+
+            // New line
+            sp.DrawString(sf, text, new Vector2(bound.X, bound.Y)
+                + new Vector2((bound.Width - size.X) / 2, 0), Color.White);
+
 
         }
     }

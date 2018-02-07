@@ -21,7 +21,7 @@ namespace LinkedListMenu
         LinkedList<MenuItem> MenuList
             = new LinkedList<MenuItem>();
         private Menu menu;
-
+         
         //LinkedListNode<MenuItem> current;
         //string SelectedText = string.Empty;
         public Game1()
@@ -55,10 +55,10 @@ namespace LinkedListMenu
             spriteBatch = new SpriteBatch(GraphicsDevice);
             font = Content.Load<SpriteFont>("font");
             Texture2D tx = Content.Load<Texture2D>("Background");
-            MenuList.AddLast(new MenuItem("Menu Item    1", tx));
-            MenuList.AddLast(new MenuItem("Menu Item  2", tx));
-            MenuList.AddLast(new MenuItem("Menu Item  3", tx));
-            MenuList.AddLast(new MenuItem("Menu Item   4", tx));
+            MenuList.AddLast(new MenuItem("Resume", tx));
+            MenuList.AddLast(new MenuItem("Inventory", tx));
+            MenuList.AddLast(new MenuItem("Options", tx));
+            MenuList.AddLast(new MenuItem("Quit", tx));
 
             menu = new Menu(MenuList);
 
@@ -86,6 +86,16 @@ namespace LinkedListMenu
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+
+            
+
+                   
+
+                
+
+            
+
+
             menu.Update();
             base.Update(gameTime);
         }
